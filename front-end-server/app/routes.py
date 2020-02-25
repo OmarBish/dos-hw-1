@@ -63,19 +63,12 @@ def Book(book_id):
                 return jsonify(res) ,404
             book = records[0]
 
-            if(book[2] == 0):
-                res = {
-                    'message': 'Out of stock'
-                }
-                return jsonify(res) ,410
-
-            newAmount = book[2] - 1
-            sql_update_query = "UPDATE books SET amount = "+ str(newAmount) +" WHERE id = "+book_id
-
             # TODO:- add the order srver url
             # result = requests.get('http://example.com')
             # TODO:- decode the json and send the result to the user
             # result.text
+
+            
             
             res = {
                 'id' : book[0],
