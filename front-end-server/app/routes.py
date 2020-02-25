@@ -1,6 +1,5 @@
 # third-party imports
 from flask import redirect,request,jsonify
-import os
 import requests
 
 
