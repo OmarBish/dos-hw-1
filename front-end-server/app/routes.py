@@ -1,13 +1,11 @@
 # third-party imports
 from flask import redirect,request,jsonify
 import os
-import sqlite3
 import requests
 
 
 # local imports
 from app import app
-from app.helpers import buildResponse
 
 # index route, redirect to api dcumentation url
 @app.route('/')
