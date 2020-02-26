@@ -13,24 +13,28 @@ def index():
 
 #TODO: redirct all unwanted routes to root dir
 # index route, redirect to api dcumentation url
-@app.route('/operation/buy')
+@app.route('/operation/buy',methods=['POST'])
 def buy():
     data = request.get_json()
     amount = data['amount']
     book_id = data['id']
     if(amount == 0):
-        res = {
-            'message': 'Out of stock'
-        }
-        return jsonify(res) ,410
+        return jsonify() ,410
     
     newAmount = amount - 1
-    sql_update_query = "UPDATE books SET amount = "+ str(newAmount) +" WHERE id = "+ book_id
+    sql_update_query = "UPDATE books SET amount = "+ str(newAmount) +" WHERE id = "+ str(book_id)
 
-    # TODO:- add the order srver url
-    # result = requests.get('http://example.com')
-    # TODO:- decode the json and send the result to the user
-    # result.text
+    req = {
+        'sqlite_query':sql_update_query
+    }
+    result = requests.post('http://127.0.0.1:5001/query',json=req)
+    if result.status_code == 201:
+        data['amount'] = newAmount
+        return jsonify(data) ,200
+    else:
+        return jsonify() ,500
+
+    
 
     
     
