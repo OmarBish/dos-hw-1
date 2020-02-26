@@ -15,7 +15,7 @@ def index():
 
 
 # index route, redirect to api dcumentation url
-@app.route('/query',,methods=['POST'])
+@app.route('/query',methods=['POST'])
 def query():
     # variables
     data = request.get_json()
@@ -28,30 +28,31 @@ def query():
     cursor = conn.cursor()
     
     # operation
-    if sqlite_query.start_with('INSERT') :
-        cursor.execute(sql_query)
+    if sqlite_query.startswith('INSERT') :
+        print(sqlite_query)
+        cursor.execute(sqlite_query)
         records = cursor.fetchall()
         conn.commit()
         res ={
             'id':cursor.lastrowid
         } 
         status = 201
-    elif sqlite_query.start_with('SELECT'):
-        cursor.execute(sql_query)
+    elif sqlite_query.startswith('SELECT'):
+        cursor.execute(sqlite_query)
         records = cursor.fetchall()
         res = []
         for row in records:
             res.append({'id':row[0],'title':row[1],'amount':row[2]})
         status = 200
-    elif sqlite_query.start_with('UPDATE'):
-        cursor.execute(sql_query)
+    elif sqlite_query.startswith('UPDATE'):
+        cursor.execute(sqlite_query)
         conn.commit()
         res ={
             'id':cursor.lastrowid
         } 
         status = 201
     else:
-        let res={
+        res={
             'message':'unsupported operation'
         }
         status = 405
