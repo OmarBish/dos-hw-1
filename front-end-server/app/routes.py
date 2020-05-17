@@ -1,20 +1,20 @@
 # third-party imports
 from flask import redirect,request,jsonify
 import requests
-import time
 from random import randint
-
-
+from app.helpers import getCachedResponse,getResponse
 
 # local imports
 from app import app
 from app import cache
+from app import catalog_servers,order_servers
 
-@cache.memoize(15)
-def get_current_time(x):
-    return time.ctime()
 
+@app.route("/cleare-cache",methods=['POST'])
+def cleareCache():
     data = request.get_json()
+    cache.delete_memoized('getCachedResponse', data.base,data.route, data.body)
+    return jsonify() ,200
 
 # index route, redirect to api dcumentation url
 @app.route('/')
@@ -34,7 +34,9 @@ def Books():
         req = {
             'sqlite_query':sqlite_insert_query
         }
-        result = requests.post('https://dos-bazar-catalog-server.herokuapp.com/query',json=req)
+        
+
+        result = getResponse('catalog','/query',req)
         
         resData=result.json()
         data={'id':resData['id'],'title':data['title'],'amount':data['amount']}
@@ -49,7 +51,7 @@ def Books():
         req = {
             'sqlite_query':sqlite_insert_query
         }
-        result = requests.post('https://dos-bazar-catalog-server.herokuapp.com/query',json=req)
+        result = getCachedResponse('catalog','/query',req)
         
         res =result.json()
         return jsonify(res) ,200
@@ -66,7 +68,7 @@ def Book(book_id):
             req = {
                 'sqlite_query':sqlite_insert_query
             }
-            result = requests.post('https://dos-bazar-catalog-server.herokuapp.com/query',json=req)
+            result = getCachedResponse('catalog','/query',req)
            
             records = result.json()
             if(len(records) == 0):
@@ -76,7 +78,7 @@ def Book(book_id):
                 return jsonify(res) ,404
             book = records[0]
 
-            result = requests.post('https://dos-bazar-order-server.herokuapp.com/operation/buy',json=book)
+            result = getResponse('order','/query',json=book)
             if result.status_code == 410:
                 res = {
                     'message': 'Out of stock'
@@ -99,7 +101,7 @@ def Book(book_id):
         req = {
             'sqlite_query':sqlite_insert_query
         }
-        result = requests.post('https://dos-bazar-catalog-server.herokuapp.com/query',json=req)
+        result = getCachedResponse('catalog','/query',req)
         
         records = result.json()
 
