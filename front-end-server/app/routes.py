@@ -14,15 +14,7 @@ from app import cache
 def get_current_time(x):
     return time.ctime()
 
-@app.route("/cache-test")
-def zen():
-    return """
-    <ul>
-        <li><strong>It is cached:</strong> {cached}</li>
-    </ul>
-    """.format(
-        cached=get_current_time(randint(0,9)),
-    )
+    data = request.get_json()
 
 # index route, redirect to api dcumentation url
 @app.route('/')
