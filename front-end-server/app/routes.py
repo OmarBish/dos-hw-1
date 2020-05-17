@@ -1,10 +1,28 @@
 # third-party imports
 from flask import redirect,request,jsonify
 import requests
+import time
+from random import randint
+
 
 
 # local imports
 from app import app
+from app import cache
+
+@cache.memoize(15)
+def get_current_time(x):
+    return time.ctime()
+
+@app.route("/cache-test")
+def zen():
+    return """
+    <ul>
+        <li><strong>It is cached:</strong> {cached}</li>
+    </ul>
+    """.format(
+        cached=get_current_time(randint(0,9)),
+    )
 
 # index route, redirect to api dcumentation url
 @app.route('/')
